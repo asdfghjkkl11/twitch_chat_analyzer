@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 import requests
 import json
-import math
-import pprint, inspect
 from tkinter import *
 from tkinter import messagebox
 import tkinter.constants as Tkconstants
@@ -100,7 +98,6 @@ def graph():
         # plug in the figure
         figAgg = FigureCanvasTkAgg(figure, canvas)
         mplCanvas = figAgg.get_tk_widget()
-
         # and connect figure with scrolling region
         cwid = canvas.create_window(0, 0, window=mplCanvas, anchor=Tkconstants.NW)
         changeSize(figure, 1)
@@ -113,19 +110,16 @@ def graph():
         mplCanvas.config(width=wi, height=hi)
         canvas.itemconfigure(cwid, width=wi, height=hi)
         canvas.config(scrollregion=canvas.bbox(Tkconstants.ALL), width=200, height=200)
-        tz.set_fontsize(tz.get_fontsize() * factor)
         for item in ([ax.title, ax.xaxis.label, ax.yaxis.label] +
                      ax.get_xticklabels() + ax.get_yticklabels()):
             item.set_fontsize(item.get_fontsize() * factor)
         ax.xaxis.labelpad = ax.xaxis.labelpad * factor
         ax.yaxis.labelpad = ax.yaxis.labelpad * factor
         figure.subplots_adjust(left=0.2, bottom=0.15, top=0.86)
+        plt.tight_layout()
         figure.canvas.draw()
 
-    global chat
-    global time
-    global user
-    global new, figure
+    global chat, time, user, new, figure, canvas
     words = text_W.get().strip()
     if words == "":
         messagebox.showinfo('warnning', 'words is empty')
@@ -146,7 +140,7 @@ def graph():
 
     new = Toplevel()
     new.title('Graph')
-    new.geometry('800x400')
+    new.geometry('800x410')
     new.rowconfigure(1, weight=1)
     new.columnconfigure(1, weight=1)
     frame = Frame(new)
@@ -154,11 +148,10 @@ def graph():
     frame.rowconfigure(1, weight=1)
     frame.columnconfigure(1, weight=1)
     term = len(list(times.keys()))
-    print(term)
-    figure = plt.figure(dpi=100, figsize=(term/6, 4))
+    plt.clf()
+    figure = plt.figure(figsize=(term/6, 4))
     ax = figure.add_subplot(111)
     ax.plot(list(times.keys()), list(times.values()))
-    tz = figure.suptitle('Graph')
     start, end = ax.get_xlim()
     term /= 20
     if term > 5:
@@ -168,7 +161,7 @@ def graph():
     ax.set_ylabel('numbers')
 
     addScrollingFigure(figure, frame)
-
+    plt.tight_layout()
     buttonFrame = Frame(new)
     buttonFrame.grid(row=1, column=2, sticky=Tkconstants.NS)
     biggerButton = Button(buttonFrame, text="larger",
@@ -209,11 +202,14 @@ if __name__ == "__main__":
     lbl1 = Label(Frame2, text='Chat Log', bg="#777777")
     lbl1.pack(pady=10)
     lbl1.config(font=('', 20,))
-    scroll = Scrollbar(Frame2)
-    scroll.pack(side=RIGHT, fill=Y)
-    text_A = Listbox(Frame2, width=80, yscrollcommand=scroll.set, selectmode=MULTIPLE, selectbackground="#333333")
+    scroll1 = Scrollbar(Frame2)
+    scroll2 = Scrollbar(Frame2, orient=HORIZONTAL)
+    text_A = Listbox(Frame2, width=80, yscrollcommand=scroll1.set, xscrollcommand=scroll2.set, selectbackground="#333333")
+    scroll2.pack(side=BOTTOM, fill=X)
     text_A.pack(side=LEFT, fill=Y)
-    scroll["command"] = text_A.yview
+    scroll1.pack(side=RIGHT, fill=Y)
+    scroll1["command"] = text_A.yview
+    scroll2["command"] = text_A.xview
     Frame2.pack(fill=Y, padx=10, pady=10)
 
     root.mainloop()

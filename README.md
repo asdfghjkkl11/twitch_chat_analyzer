@@ -9,9 +9,6 @@ module
 ``` python
 Default 
   json
-  math
-  pprint
-  inspect
   tKinter
 require install
   requests
