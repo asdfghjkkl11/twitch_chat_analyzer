@@ -68,12 +68,16 @@ def load():
             if '_next' not in j:
                 break
             nextCursor = j["_next"]
-
         for x in range(0, len(time)):
-            alog = '[' + str(time[x]) + '] <' + str(user[x]) + '> ' + str(chat[x]) + "\n"
+            char_list = [chat[x][j] for j in range(len(chat[x])) if ord(chat[x][j]) in range(65536)]
+            string = ''
+            for j in char_list:
+                string = string + j
+            alog = '[' + str(time[x]) + '] <' + str(user[x]) + '> ' + str(string) + "\n"
             text_A.insert(x, alog)
-    except:
-        messagebox.showinfo('warnning', 'video ID or client ID is wrong')
+    except Exception as ex:
+        print(str(ex))
+        messagebox.showinfo('warnning', 'video ID or client ID is wrong\n')
         return
 
 
@@ -83,18 +87,14 @@ def graph():
         # set up a canvas with scrollbars
         canvas = Canvas(frame)
         canvas.grid(row=1, column=1, sticky=Tkconstants.NSEW)
-
         xScrollbar = Scrollbar(frame, orient=Tkconstants.HORIZONTAL)
         yScrollbar = Scrollbar(frame)
-
         xScrollbar.grid(row=2, column=1, sticky=Tkconstants.EW)
         yScrollbar.grid(row=1, column=2, sticky=Tkconstants.NS)
-
         canvas.config(xscrollcommand=xScrollbar.set)
         xScrollbar.config(command=canvas.xview)
         canvas.config(yscrollcommand=yScrollbar.set)
         yScrollbar.config(command=canvas.yview)
-
         # plug in the figure
         figAgg = FigureCanvasTkAgg(figure, canvas)
         mplCanvas = figAgg.get_tk_widget()
@@ -137,7 +137,6 @@ def graph():
                 else:
                     times[time[i][:5]] = 1
                 break
-
     new = Toplevel()
     new.title('Graph')
     new.geometry('800x410')
@@ -149,26 +148,24 @@ def graph():
     frame.columnconfigure(1, weight=1)
     term = len(list(times.keys()))
     plt.clf()
-    figure = plt.figure(figsize=(term/6, 4))
+    figure = plt.figure(figsize=(5+(term/10), 4))
     ax = figure.add_subplot(111)
     ax.plot(list(times.keys()), list(times.values()))
     start, end = ax.get_xlim()
+    plt.xlim(0, end+start)
     term /= 20
     if term > 5:
         term = 5
-    ax.xaxis.set_ticks(np.arange(start, end, term))
+    ax.xaxis.set_ticks(np.arange(0, end+start, term))
     ax.set_xlabel('times')
     ax.set_ylabel('numbers')
-
     addScrollingFigure(figure, frame)
     plt.tight_layout()
     buttonFrame = Frame(new)
     buttonFrame.grid(row=1, column=2, sticky=Tkconstants.NS)
-    biggerButton = Button(buttonFrame, text="larger",
-                          command=lambda: changeSize(figure, 1.2))
+    biggerButton = Button(buttonFrame, text="larger", command=lambda: changeSize(figure, 1.2))
     biggerButton.grid(column=1, row=1)
-    smallerButton = Button(buttonFrame, text="smaller",
-                           command=lambda: changeSize(figure, 0.833))
+    smallerButton = Button(buttonFrame, text="smaller", command=lambda: changeSize(figure, 0.833))
     smallerButton.grid(column=1, row=2)
 
 
@@ -211,5 +208,7 @@ if __name__ == "__main__":
     scroll1["command"] = text_A.yview
     scroll2["command"] = text_A.xview
     Frame2.pack(fill=Y, padx=10, pady=10)
+    lbl_N = Label(root, text='made by asdfghjkkl11', bg="#777777", anchor='e')
+    lbl_N.pack(side=BOTTOM, fill=X)
 
     root.mainloop()
