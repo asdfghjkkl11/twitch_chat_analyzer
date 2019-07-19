@@ -159,6 +159,13 @@ def graph():
     ax.xaxis.set_ticks(np.arange(0, end+start, term))
     ax.set_xlabel('times')
     ax.set_ylabel('numbers')
+    ax.minorticks_on()
+    # Customize the major grid
+    ax.grid(which='major', linestyle='-', linewidth='0.5', color='black')
+    # Customize the minor grid
+    ax.grid(which='minor', linestyle=':', linewidth='0.5', color='black')
+    # Turn off the display of all ticks.
+    ax.tick_params(which='both', top='False', left='False', right='False', bottom='False')
     addScrollingFigure(figure, frame)
     plt.tight_layout()
     buttonFrame = Frame(new)
