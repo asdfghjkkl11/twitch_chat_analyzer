@@ -24,9 +24,8 @@ require install
 
 2. run program
 
-  1_ run app.py
-
-  2_ make exe file & run dist/app.exe
+- run app.py
+- or make exe file & run dist/app.exe
 
 ``` terminal
 pyinstaller --onefile --noconsole --icon=twitch.ico app.py
