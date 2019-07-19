@@ -22,9 +22,11 @@ require install
 
 1. download zip or git clone this repository
 
-2-1. run app.py
+2. run program
 
-2-2. make exe file & run dist/app.exe
+  1_ run app.py
+
+  2_ make exe file & run dist/app.exe
 
 ``` terminal
 pyinstaller --onefile --noconsole --icon=twitch.ico app.py
